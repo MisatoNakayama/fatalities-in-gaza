@@ -19,7 +19,7 @@ os.makedirs(os.path.dirname(PLOT_PNG), exist_ok=True)
 # ------------------------------------------------------------
 def find_latest_pdf_url():
     html = requests.get(LIST_URL, timeout=30).text
-    soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(html, "html.parser")
 
     # 「Reported impact snapshot | Gaza Strip (7 May 2025)」のような <a> を探す
     snapshots = []
