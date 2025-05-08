@@ -71,11 +71,27 @@ def extract_deaths(pdf_url):
     with pdfplumber.open(pdf_path) as pdf:
         text = "\n".join(page.extract_text() or "" for page in pdf.pages)
 
-    # 「Palestinians 52,653 Reported fatalities …」のような数字を取る
-    m = re.search(r"Palestinians.*?([\d,]{5,})", text, re.S | re.I)
+    # 1) 「palestinians」「fatalities」が近接している箇所を狙う
+    pat = re.compile(
+        r"palestinians[^0-9]{0,40}([\d,]{3,})[^a-z]{0,20}fatalities",
+        re.I | re.S,
+    )
+    m = pat.search(text)
+
+    # 2) 見つからなければ行単位でスキャン
+    if not m:
+        for line in text.splitlines():
+            if "palestinians" in line.lower():
+                nums = re.findall(r"\d{1,3}(?:,\d{3})+", line)
+                if nums:
+                    m = nums[0]
+                    break
+
     if not m:
         raise RuntimeError("PDF から死亡者数が抽出できません")
-    return int(m.group(1).replace(",", ""))
+
+    num_str = m if isinstance(m, str) else m.group(1)
+    return int(num_str.replace(",", ""))
 
 # ------------------------------------------------------------
 def main():
