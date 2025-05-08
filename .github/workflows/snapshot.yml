@@ -11,6 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create runtime folders
+        run: |
+          mkdir -p scripts data plots
+    
+      - name: Run scraper
+        run: python scripts/scrape.py
+    
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
