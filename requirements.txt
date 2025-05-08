@@ -4,3 +4,6 @@ python-dateutil
 pdfplumber
 pandas
 matplotlib
+lxml            # ← HTML パーサー高速化
+pytesseract     # ← OCR 用（任意。入れないなら自動でスキップ）
+pdf2image       # ← OCR 用（poppler-utils がランナー側に必要）
