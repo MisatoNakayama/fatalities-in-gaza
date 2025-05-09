@@ -1,20 +1,15 @@
-name: Weekly OCHA Gaza Snapshot
+name: Weekly Gaza snapshot
 
 on:
   schedule:
-    - cron: '0 6 * * 4'   # 毎週水曜 15:00 JST（06:00 UTC）
-  workflow_dispatch:       # 手動実行も可
+    - cron: '0 6 * * 4'      # 毎週木曜 15:00 JST (06:00 UTC) ※前日公開が多いため
+  workflow_dispatch:
 
 jobs:
-  scrape-and-commit:
+  scrape-chart:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y poppler-utils
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,16 +21,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run scraper
+      - name: Run scraper & plotter
         run: python scripts/scrape.py
 
-      - name: Commit & push changes
+      - name: Commit updated data & docs
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name  "github-actions[bot]"
-          git add data/*.csv plots/*.png
-          git diff --cached --quiet || git commit -m "Update snapshot data ($(date -u +'%Y-%m-%d'))"
+          git add data/*.csv docs/*
+          git diff --cached --quiet || git commit -m "Update OCHA snapshot ($(date -u +'%Y-%m-%d'))"
           git push
         env:
-          # GITHUB_TOKEN はデフォルトで渡ってくるので特別な設定は不要
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
