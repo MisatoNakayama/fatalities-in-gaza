@@ -1,9 +1,7 @@
-beautifulsoup4
 requests
-python-dateutil
+beautifulsoup4
+lxml
 pdfplumber
+python-dateutil
 pandas
 matplotlib
-lxml            # ← HTML パーサー高速化
-pytesseract     # ← OCR 用（任意。入れないなら自動でスキップ）
-pdf2image       # ← OCR 用（poppler-utils がランナー側に必要）
